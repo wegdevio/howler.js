@@ -2550,6 +2550,17 @@
       Howler.masterGain.connect(Howler.ctx.destination);
     }
 
+    // https://github.com/goldfire/howler.js/pull/1770
+    // Fix audio not resuming after backgrounding
+    if (Howler.usingWebAudio && Howler.ctx.addEventListener) {
+      Howler.ctx.addEventListener('statechange', function() {
+        if (Howler.ctx.state !== 'running' && Howler._audioUnlocked) {
+          Howler.ctx.resume();
+        }
+      });
+    }
+
+
     // Re-run the setup on Howler.
     Howler._setup();
   };
